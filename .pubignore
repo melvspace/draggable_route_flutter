@@ -1,0 +1,6 @@
+media/
+patches/
+scripts/
+.fvmrc
+.vscode
+*.iml

@@ -1,0 +1,21 @@
+name: draggable_route
+repository: https://github.com/rIIh/draggable_route_flutter
+homepage: https://github.com/rIIh/draggable_route_flutter
+issue_tracker: https://github.com/rIIh/draggable_route_flutter/issues
+
+description: "Draggable Hero route. Inspired by Instagram route transitions. Open route from source widget and closes to source widget. Can be closed by drag"
+version: 0.2.0
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  provider: ^6.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
