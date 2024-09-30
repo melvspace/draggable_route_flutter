@@ -147,8 +147,6 @@ class _PanGestureRecognizer extends PanGestureRecognizer {
 
     final slop = delta.dx.abs() > delta.dy.abs() ? xSlop : ySlop;
 
-    print('$xSlop, $ySlop -> $slop');
-
     return globalDistanceMoved.abs() > slop;
   }
 }
