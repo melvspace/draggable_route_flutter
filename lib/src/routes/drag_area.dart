@@ -1,5 +1,6 @@
 import 'package:draggable_route/draggable_route.dart';
 import 'package:draggable_route/src/gestures/monodrag.dart';
+import 'package:flutter/gestures.dart' show computePanSlop;
 import 'package:flutter/widgets.dart';
 
 class DragArea extends StatefulWidget {
@@ -131,18 +132,20 @@ class _PanGestureRecognizer extends PanGestureRecognizer {
       );
     }
 
+    final defaultPanSlop = computePanSlop(pointerDeviceKind, gestureSettings);
+
     var delta = (finalPosition.global - initialPosition.global);
 
     var ySlop = switch (verticalEdge()) {
-      _Edge.start when delta.dy > 0 => 4,
-      _Edge.end when delta.dy < 0 => 4,
-      _ => 12,
+      _Edge.start when delta.dy > 0 => defaultPanSlop / 2,
+      _Edge.end when delta.dy < 0 => defaultPanSlop / 2,
+      _ => defaultPanSlop * 2,
     };
 
     var xSlop = switch (horizontalEdge()) {
-      _Edge.start when delta.dx > 0 => 4,
-      _Edge.end when delta.dx < 0 => 4,
-      _ => 12,
+      _Edge.start when delta.dx > 0 => defaultPanSlop / 2,
+      _Edge.end when delta.dx < 0 => defaultPanSlop / 2,
+      _ => defaultPanSlop * 2,
     };
 
     final slop = delta.dx.abs() > delta.dy.abs() ? xSlop : ySlop;
