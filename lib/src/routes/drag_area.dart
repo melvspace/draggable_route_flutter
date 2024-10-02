@@ -137,15 +137,15 @@ class _PanGestureRecognizer extends PanGestureRecognizer {
     var delta = (finalPosition.global - initialPosition.global);
 
     var ySlop = switch (verticalEdge()) {
-      _Edge.start when delta.dy > 0 => defaultPanSlop / 2,
-      _Edge.end when delta.dy < 0 => defaultPanSlop / 2,
-      _ => defaultPanSlop * 2,
+      _Edge.start when delta.dy > 0 => 4,
+      _Edge.end when delta.dy < 0 => 4,
+      _ => 24,
     };
 
     var xSlop = switch (horizontalEdge()) {
-      _Edge.start when delta.dx > 0 => defaultPanSlop / 2,
-      _Edge.end when delta.dx < 0 => defaultPanSlop / 2,
-      _ => defaultPanSlop * 2,
+      _Edge.start when delta.dx > 0 => 4,
+      _Edge.end when delta.dx < 0 => 4,
+      _ => 24,
     };
 
     final slop = delta.dx.abs() > delta.dy.abs() ? xSlop : ySlop;
