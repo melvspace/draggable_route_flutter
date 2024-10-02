@@ -1,6 +1,14 @@
+## 0.2.2
+
+### Fixes 
+
+- fix unresponsive drag on iOS devices
+
 ## 0.2.1
 
-* **fix:** remove print call
+### Fixes 
+
+* remove print call
 
 
 ## 0.1.0
