@@ -1,3 +1,9 @@
+## 0.3.1
+
+### Docs 
+
+- remove unresolvable doc imports
+
 ## 0.3.0
 
 ### Features 
