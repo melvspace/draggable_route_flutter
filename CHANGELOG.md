@@ -1,3 +1,9 @@
+## 0.3.0
+
+### Features 
+
+- add configurable theme
+
 ## 0.2.3
 
 ### Fixes 
