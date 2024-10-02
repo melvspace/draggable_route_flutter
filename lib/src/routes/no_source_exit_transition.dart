@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:draggable_route/draggable_route.dart';
 import 'package:flutter/material.dart';
 
 class NoSourceExitTransition extends StatelessWidget {
@@ -16,8 +17,21 @@ class NoSourceExitTransition extends StatelessWidget {
   Widget build(BuildContext context) {
     return FadeTransition(
       opacity: animation,
-      child: BlurTransition(
-        sigma: Tween<double>(begin: 10, end: 0).animate(animation),
+      child: AnimatedBuilder(
+        animation: animation,
+        builder: (context, child) {
+          final dissolveFilterBuilder =
+              DraggableRouteTheme.of(context).dissolveFilterBuilder;
+          if (dissolveFilterBuilder != null) {
+            return ImageFiltered(
+              enabled: animation.isAnimating,
+              imageFilter: dissolveFilterBuilder(ReverseAnimation(animation)),
+              child: child,
+            );
+          }
+
+          return child!;
+        },
         child: child,
       ),
     );

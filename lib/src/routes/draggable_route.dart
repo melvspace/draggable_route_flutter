@@ -1,22 +1,33 @@
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:draggable_route/src/routes/drag_area.dart';
 import 'package:draggable_route/src/routes/no_source_exit_transition.dart';
+import 'package:draggable_route/src/theme/draggable_route_theme.dart';
 import 'package:flutter/material.dart';
 
+/// Route with instagram-like transition from other widgets.
 class DraggableRoute<T> extends PageRoute<T>
     with MaterialRouteTransitionMixin<T> {
   static DraggableRoute of(BuildContext context) {
     return ModalRoute.of(context) as DraggableRoute;
   }
 
+  /// Source element from which transition will be performing.
+  ///
+  /// `context` provided to `source` should not have GlobalKeys in children.
+  ///
+  /// Source widget from `context` will be recreated for shuttle animation.
   final BuildContext? source;
 
   /// Builds the primary contents of the route.
   final WidgetBuilder builder;
 
-  final BorderRadius borderRadius;
+  // #region Style Properties
+
+  /// Border radius of card when dragging around
+  final BorderRadius? borderRadius;
+
+  // #endregion
 
   /// Construct a DraggableRoute whose contents are defined by [builder].
   DraggableRoute({
@@ -27,24 +38,30 @@ class DraggableRoute<T> extends PageRoute<T>
     super.fullscreenDialog,
     super.allowSnapshotting = false,
     super.barrierDismissible = false,
-    this.borderRadius = const BorderRadius.all(Radius.circular(24)),
+    this.borderRadius,
   }) {
     assert(opaque);
   }
 
-  var entered = ValueNotifier(false);
+  @override
+  Duration get transitionDuration {
+    return DraggableRouteTheme.of(navigator!.context).transitionDuration;
+  }
 
-  var offset = ValueNotifier(Offset.zero);
-  var velocity = Offset.zero;
+  final _entered = ValueNotifier(false);
+
+  final _offset = ValueNotifier(Offset.zero);
+  var _velocity = Offset.zero;
+
   void handleDragStart(DragStartDetails details) {
     navigator!.didStartUserGesture();
-    offset.value = Offset.zero;
+    _offset.value = Offset.zero;
   }
 
   void handleDragUpdate(DragUpdateDetails details) {
-    offset.value += details.delta;
-    velocity = details.delta;
-    fling();
+    _offset.value += details.delta;
+    _velocity = details.delta;
+    _fling();
   }
 
   void handleDragCancel() {
@@ -54,30 +71,30 @@ class DraggableRoute<T> extends PageRoute<T>
       navigator!.didStopUserGesture();
     }
 
-    offset.value = Offset.zero;
-    velocity = Offset.zero;
+    _offset.value = Offset.zero;
+    _velocity = Offset.zero;
     controller?.value = 1.0;
   }
 
   void handleDragEnd(DragEndDetails details) {
     navigator!.didStopUserGesture();
-    fling();
+    _fling();
   }
 
-  void fling() {
+  void _fling() {
     if (!isActive) return;
 
     if (!navigator!.userGestureInProgress) {
-      if (offset.value.distanceSquared > 100 ||
-          velocity.distanceSquared > 100) {
+      if (_offset.value.distanceSquared > 100 ||
+          _velocity.distanceSquared > 100) {
         navigator!.pop();
       } else {
-        offset.value = Offset.zero;
-        velocity = Offset.zero;
+        _offset.value = Offset.zero;
+        _velocity = Offset.zero;
         controller?.value = 1.0;
       }
     } else {
-      if (offset.value != Offset.zero) {
+      if (_offset.value != Offset.zero) {
         controller?.value = 0.999;
       } else {
         controller?.value = 1.0;
@@ -91,13 +108,19 @@ class DraggableRoute<T> extends PageRoute<T>
 
     void handleEntered(AnimationStatus status) {
       if (status == AnimationStatus.completed) {
-        entered.value = true;
+        _entered.value = true;
         controller!.removeStatusListener(handleEntered);
       }
     }
 
     controller!.addStatusListener(handleEntered);
   }
+
+  @override
+  final bool maintainState;
+
+  @override
+  String get debugLabel => '${super.debugLabel}(${settings.name})';
 
   @override
   Widget buildContent(BuildContext context) => builder(context);
@@ -108,11 +131,12 @@ class DraggableRoute<T> extends PageRoute<T>
     Animation<double> animation,
     Animation<double> secondaryAnimation,
   ) {
-    final Widget result = buildContent(context);
+    final Widget content = buildContent(context);
+
     return Semantics(
       scopesRoute: true,
       explicitChildNodes: true,
-      child: result,
+      child: content,
     );
   }
 
@@ -123,23 +147,32 @@ class DraggableRoute<T> extends PageRoute<T>
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
+    final source = this.source;
+    final theme = DraggableRouteTheme.of(context);
     animation = CurvedAnimation(
       parent: animation,
-      curve: Curves.linear,
-      reverseCurve: Curves.easeInQuad,
+      curve: theme.transitionCurve,
+      reverseCurve: theme.transitionCurveOut,
     );
 
-    final source = this.source;
+    final backdropFilterBuilder = theme.backdropFilterBuilder;
+
     if (source == null || !source.mounted) {
-      return BackdropFilter(
-        filter: ImageFilter.blur(
-          sigmaX: 5 * animation.value,
-          sigmaY: 5 * animation.value,
-        ),
-        child: ListenableBuilder(
-          listenable: entered,
+      return _wrap(
+        (context, child) {
+          if (backdropFilterBuilder != null) {
+            return BackdropFilter(
+              filter: backdropFilterBuilder(animation),
+              child: child,
+            );
+          }
+
+          return child;
+        },
+        ListenableBuilder(
+          listenable: _entered,
           builder: (context, child) {
-            if (!entered.value) {
+            if (!_entered.value) {
               return super.buildTransitions(
                 context,
                 animation,
@@ -150,14 +183,15 @@ class DraggableRoute<T> extends PageRoute<T>
 
             return LayoutBuilder(
               builder: (context, constraints) => Transform.translate(
-                offset: offset.value,
+                offset: _offset.value,
                 child: NoSourceExitTransition(
                   animation: animation,
                   child: ClipPath(
                     clipper: _RectWithNotchesClipper(
-                      borderRadius: borderRadius,
+                      borderRadius: borderRadius ??
+                          DraggableRouteTheme.of(context).borderRadius,
                     ),
-                    child: buildDragArea(
+                    child: _buildDragArea(
                       context,
                       animation,
                       secondaryAnimation,
@@ -172,12 +206,18 @@ class DraggableRoute<T> extends PageRoute<T>
         ),
       );
     } else {
-      return BackdropFilter(
-        filter: ImageFilter.blur(
-          sigmaX: 5 * animation.value,
-          sigmaY: 5 * animation.value,
-        ),
-        child: LayoutBuilder(
+      return _wrap(
+        (context, child) {
+          if (backdropFilterBuilder != null) {
+            return BackdropFilter(
+              filter: backdropFilterBuilder(animation),
+              child: child,
+            );
+          }
+
+          return child;
+        },
+        LayoutBuilder(
           builder: (context, constraints) {
             final startRO = source.findRenderObject() as RenderBox;
             final startTransform = startRO.getTransformTo(null);
@@ -188,7 +228,7 @@ class DraggableRoute<T> extends PageRoute<T>
                 startRO.size.width,
                 startRO.size.height,
               ),
-              end: offset.value & constraints.biggest,
+              end: _offset.value & constraints.biggest,
             );
 
             return Stack(
@@ -203,14 +243,15 @@ class DraggableRoute<T> extends PageRoute<T>
                   child: ClipPath(
                     clipper: _RectWithNotchesClipper(
                       influence: animation.value,
-                      borderRadius: borderRadius,
+                      borderRadius: borderRadius ??
+                          DraggableRouteTheme.of(context).borderRadius,
                     ),
                     child: FittedBox(
                       alignment: Alignment.topCenter,
                       fit: BoxFit.cover,
                       child: ConstrainedBox(
                         constraints: constraints,
-                        child: buildDragArea(
+                        child: _buildDragArea(
                           context,
                           animation,
                           secondaryAnimation,
@@ -248,7 +289,10 @@ class DraggableRoute<T> extends PageRoute<T>
     }
   }
 
-  List<Widget> buildNotches() {
+  List<Widget> _buildNotches(BuildContext context) {
+    final borderRadius = this.borderRadius ?? //
+        DraggableRouteTheme.of(context).borderRadius;
+
     return [
       Positioned(
         left: 0,
@@ -295,7 +339,7 @@ class DraggableRoute<T> extends PageRoute<T>
     ];
   }
 
-  Widget buildDragArea(
+  Widget _buildDragArea(
     BuildContext context,
     Animation animation,
     Animation secondaryAnimation,
@@ -304,17 +348,11 @@ class DraggableRoute<T> extends PageRoute<T>
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        ...buildNotches(),
+        ..._buildNotches(context),
         DragArea(child: child),
       ],
     );
   }
-
-  @override
-  final bool maintainState;
-
-  @override
-  String get debugLabel => '${super.debugLabel}(${settings.name})';
 }
 
 class _RectWithNotchesClipper extends CustomClipper<Path> {
@@ -353,4 +391,11 @@ class _RectWithNotchesClipper extends CustomClipper<Path> {
     return borderRadius != oldClipper.borderRadius ||
         influence != oldClipper.influence;
   }
+}
+
+Widget _wrap(
+    Widget Function(BuildContext context, Widget child) builder, Widget child) {
+  return Builder(
+    builder: (context) => builder(context, child),
+  );
 }

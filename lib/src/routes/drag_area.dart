@@ -1,6 +1,5 @@
 import 'package:draggable_route/draggable_route.dart';
 import 'package:draggable_route/src/gestures/monodrag.dart';
-import 'package:flutter/gestures.dart' show computePanSlop;
 import 'package:flutter/widgets.dart';
 
 class DragArea extends StatefulWidget {
@@ -132,10 +131,9 @@ class _PanGestureRecognizer extends PanGestureRecognizer {
       );
     }
 
-    final defaultPanSlop = computePanSlop(pointerDeviceKind, gestureSettings);
-
     var delta = (finalPosition.global - initialPosition.global);
 
+    // TODO(@melvspace): 10/02/24 research why this magic numbers works
     var ySlop = switch (verticalEdge()) {
       _Edge.start when delta.dy > 0 => 4,
       _Edge.end when delta.dy < 0 => 4,

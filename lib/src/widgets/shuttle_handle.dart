@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 // TODO(@melvspace): 09/30/24 probably unneded. user should keep alive reference by himself
+/// Context extractor for getting `source`
 class ShuttleHandle extends StatefulWidget {
   final ValueChanged<BuildContext> onCreated;
   final Widget child;
