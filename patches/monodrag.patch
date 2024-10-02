@@ -1,6 +1,14 @@
 --- .fvm/flutter_sdk/packages/flutter/lib/src/gestures/monodrag.dart	2024-09-30 12:00:41.552156433 +0300
-+++ lib/src/gestures/monodrag.dart	2024-09-30 16:15:51.917973504 +0300
-@@ -10,24 +10,14 @@
++++ lib/src/gestures/monodrag.dart	2024-10-02 20:17:44.629107030 +0300
+@@ -2,32 +2,19 @@
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
+ 
+-/// @docImport 'package:flutter/widgets.dart';
+-///
+-/// @docImport 'multidrag.dart';
+ library;
+ 
  import 'dart:math';
  
  import 'package:flutter/foundation.dart';
@@ -27,7 +35,7 @@
  enum _DragState {
    ready,
    possible,
-@@ -54,7 +44,8 @@
+@@ -54,7 +41,8 @@
  /// Signature for a function that builds a [VelocityTracker].
  ///
  /// Used by [DragGestureRecognizer.velocityTrackerBuilder].
@@ -37,7 +45,7 @@
  
  /// Recognizes movement.
  ///
-@@ -89,10 +80,12 @@
+@@ -89,10 +77,12 @@
      super.allowedButtonsFilter = _defaultButtonAcceptBehavior,
    });
  
@@ -52,7 +60,7 @@
  
    /// Configure the behavior of offsets passed to [onStart].
    ///
-@@ -290,6 +283,10 @@
+@@ -290,6 +280,10 @@
    late OffsetPair _finalPosition;
    Duration? _lastPendingEventTimestamp;
  
@@ -63,7 +71,7 @@
    /// When asserts are enabled, returns the last tracked pending event timestamp
    /// for this recognizer.
    ///
-@@ -317,6 +314,7 @@
+@@ -317,6 +311,7 @@
    /// If drag is only allowed along a defined axis, this value may be negative to
    /// differentiate the direction of the drag.
    late double _globalDistanceMoved;
@@ -71,7 +79,7 @@
  
    /// Determines if a gesture is a fling or not based on velocity.
    ///
-@@ -330,7 +328,8 @@
+@@ -330,7 +325,8 @@
    /// A fling calls its gesture end callback with a velocity, allowing the
    /// provider of the callback to respond by carrying the gesture forward with
    /// inertia, for example.
@@ -81,7 +89,7 @@
  
    Offset _getDeltaForDetails(Offset delta);
    double? _getPrimaryValueFromOffset(Offset value);
-@@ -339,7 +338,8 @@
+@@ -339,7 +335,8 @@
    ///
    /// The [PanGestureRecognizer] returns null.
    _DragDirection? _getPrimaryDragAxis() => null;
@@ -91,7 +99,7 @@
    bool _hasDragThresholdBeenMet = false;
  
    final Map<int, VelocityTracker> _velocityTrackers = <int, VelocityTracker>{};
-@@ -379,7 +379,8 @@
+@@ -379,7 +376,8 @@
      switch (_state) {
        case _DragState.ready:
          _state = _DragState.possible;
@@ -101,7 +109,7 @@
          _finalPosition = _initialPosition;
          _pendingDragOffset = OffsetPair.zero;
          _globalDistanceMoved = 0.0;
-@@ -425,13 +426,15 @@
+@@ -425,13 +423,15 @@
    }
  
    void _recordMoveDeltaForMultitouch(int pointer, Offset localDelta) {
@@ -119,7 +127,7 @@
  
      if (_state != _DragState.accepted || localDelta == Offset.zero) {
        return;
-@@ -509,7 +512,8 @@
+@@ -509,7 +509,8 @@
    }
  
    Offset _resolveLocalDeltaForMultitouch(int pointer, Offset localDelta) {
@@ -129,7 +137,7 @@
        if (_frameTimeStamp != null) {
          _moveDeltaBeforeFrame.clear();
          _frameTimeStamp = null;
-@@ -518,34 +522,47 @@
+@@ -518,34 +519,47 @@
        return localDelta;
      }
  
@@ -186,7 +194,7 @@
        _lastUpdatedDeltaForPan = Offset(averageX, averageY);
        dx = updatedDelta.dx;
        dy = updatedDelta.dy;
-@@ -559,16 +576,22 @@
+@@ -559,16 +573,22 @@
      required _DragDirection axis,
      required Offset localDelta,
    }) {
@@ -214,7 +222,7 @@
        if (positive) {
          if (curPointerSumDelta + delta > maxSumDelta) {
            return curPointerSumDelta + delta - maxSumDelta;
-@@ -589,7 +612,8 @@
+@@ -589,7 +609,8 @@
      required _DragDirection axis,
      required Offset localDelta,
    }) {
@@ -224,7 +232,7 @@
      final int pointerCount = _acceptedActivePointers.length;
      assert(pointerCount >= 1);
  
-@@ -609,9 +633,9 @@
+@@ -609,9 +630,9 @@
      assert(_state != _DragState.ready);
      if (!event.synthesized &&
          (event is PointerDownEvent ||
@@ -237,7 +245,7 @@
        final Offset position = switch (event) {
          PointerPanZoomStartEvent() => Offset.zero,
          PointerPanZoomUpdateEvent() => event.pan,
-@@ -623,27 +647,41 @@
+@@ -623,27 +644,41 @@
        _giveUpPointer(event.pointer);
        return;
      }
@@ -292,7 +300,7 @@
              _hasDragThresholdBeenMet = true;
              if (_acceptedActivePointers.contains(event.pointer)) {
                _checkDrag(event.pointer);
-@@ -662,7 +700,10 @@
+@@ -662,7 +697,10 @@
        }
        _recordMoveDeltaForMultitouch(event.pointer, localDelta);
      }
@@ -304,7 +312,7 @@
        _giveUpPointer(event.pointer);
      }
    }
-@@ -720,8 +761,9 @@
+@@ -720,8 +758,9 @@
  
      _moveDeltaBeforeFrame.remove(pointer);
      if (_activePointer == pointer) {
@@ -316,7 +324,7 @@
      }
    }
  
-@@ -756,15 +798,19 @@
+@@ -756,15 +795,19 @@
      _lastTransform = null;
      _checkStart(timestamp, pointer);
      if (localUpdateDelta != Offset.zero && onUpdate != null) {
@@ -340,7 +348,7 @@
        _checkUpdate(
          sourceTimeStamp: timestamp,
          delta: localUpdateDelta,
-@@ -825,8 +871,8 @@
+@@ -825,8 +868,8 @@
      } else {
        details = _considerFling(estimate, tracker.kind);
        debugReport = (details != null)
@@ -351,7 +359,7 @@
      }
      details ??= DragEndDetails(
        primaryVelocity: 0.0,
-@@ -834,7 +880,8 @@
+@@ -834,7 +877,8 @@
        localPosition: _finalPosition.local,
      );
  
@@ -361,7 +369,7 @@
    }
  
    void _checkCancel() {
-@@ -848,10 +895,12 @@
+@@ -848,10 +892,12 @@
      _velocityTrackers.clear();
      super.dispose();
    }
@@ -375,7 +383,7 @@
    }
  }
  
-@@ -878,17 +927,21 @@
+@@ -878,17 +924,21 @@
    @override
    bool isFlingGesture(VelocityEstimate estimate, PointerDeviceKind kind) {
      final double minVelocity = minFlingVelocity ?? kMinFlingVelocity;
@@ -401,7 +409,7 @@
      return DragEndDetails(
        velocity: Velocity(pixelsPerSecond: Offset(0, dy)),
        primaryVelocity: dy,
-@@ -898,8 +951,10 @@
+@@ -898,8 +948,10 @@
    }
  
    @override
@@ -414,7 +422,7 @@
    }
  
    @override
-@@ -938,17 +993,21 @@
+@@ -938,17 +990,21 @@
    @override
    bool isFlingGesture(VelocityEstimate estimate, PointerDeviceKind kind) {
      final double minVelocity = minFlingVelocity ?? kMinFlingVelocity;
@@ -440,7 +448,7 @@
      return DragEndDetails(
        velocity: Velocity(pixelsPerSecond: Offset(dx, 0)),
        primaryVelocity: dx,
-@@ -958,8 +1017,10 @@
+@@ -958,8 +1014,10 @@
    }
  
    @override
@@ -453,7 +461,7 @@
    }
  
    @override
-@@ -995,18 +1056,23 @@
+@@ -995,18 +1053,23 @@
    @override
    bool isFlingGesture(VelocityEstimate estimate, PointerDeviceKind kind) {
      final double minVelocity = minFlingVelocity ?? kMinFlingVelocity;
@@ -483,7 +491,7 @@
      return DragEndDetails(
        velocity: velocity,
        globalPosition: _finalPosition.global,
-@@ -1015,8 +1081,10 @@
+@@ -1015,8 +1078,10 @@
    }
  
    @override
