@@ -4,7 +4,7 @@ homepage: https://github.com/rIIh/draggable_route_flutter
 issue_tracker: https://github.com/rIIh/draggable_route_flutter/issues
 
 description: "Draggable Hero route. Inspired by Instagram route transitions. Open route from source widget and closes to source widget. Can be closed by drag"
-version: 0.4.0
+version: 0.4.1
 
 environment:
   sdk: ">=3.0.0 <4.0.0"

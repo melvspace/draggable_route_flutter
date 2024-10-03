@@ -1,3 +1,9 @@
+## 0.4.1
+
+### Fixes 
+
+- make drag more responsive on iOS
+
 ## 0.4.0
 
 ### Features 
