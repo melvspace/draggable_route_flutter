@@ -152,7 +152,6 @@ class _PanGestureRecognizer extends PanGestureRecognizer {
 
     var delta = (finalPosition.global - initialPosition.global);
 
-    // TODO(@melvspace): 10/02/24 research why this magic numbers works
     var ySlop = switch (verticalEdge()) {
       _Edge.start when delta.dy > 0 => edgeSlop,
       _Edge.end when delta.dy < 0 => edgeSlop,
