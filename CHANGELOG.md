@@ -1,3 +1,9 @@
+## 0.4.0
+
+### Features 
+
+- make drag settings configurable
+
 ## 0.3.1
 
 ### Docs 
