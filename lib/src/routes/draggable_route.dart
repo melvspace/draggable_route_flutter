@@ -22,12 +22,15 @@ class DraggableRoute<T> extends PageRoute<T>
   /// Builds the primary contents of the route.
   final WidgetBuilder builder;
 
-  // #region Style Properties
+// #region Style Properties
 
   /// Border radius of card when dragging around
   final BorderRadius? borderRadius;
 
-  // #endregion
+// #endregion
+
+  /// Settings to control route behavior
+  final DraggableRouteSettings? routeSettings;
 
   /// Construct a DraggableRoute whose contents are defined by [builder].
   DraggableRoute({
@@ -39,6 +42,7 @@ class DraggableRoute<T> extends PageRoute<T>
     super.allowSnapshotting = false,
     super.barrierDismissible = false,
     this.borderRadius,
+    this.routeSettings,
   }) {
     assert(opaque);
   }
@@ -349,7 +353,7 @@ class DraggableRoute<T> extends PageRoute<T>
       clipBehavior: Clip.none,
       children: [
         ..._buildNotches(context),
-        DragArea(child: child),
+        DragArea(child: child, settings: routeSettings),
       ],
     );
   }

@@ -5,7 +5,13 @@ import 'package:flutter/widgets.dart';
 class DragArea extends StatefulWidget {
   final Widget child;
 
-  const DragArea({super.key, required this.child});
+  final DraggableRouteSettings? settings;
+
+  const DragArea({
+    super.key,
+    required this.child,
+    this.settings,
+  });
 
   @override
   State<DragArea> createState() => _DragAreaState();
@@ -31,11 +37,19 @@ class _DragAreaState extends State<DragArea> {
 
   @override
   Widget build(BuildContext context) {
+    final settings = widget.settings ?? //
+        DraggableRouteTheme.of(context).settings;
+
     return RawGestureDetector(
       gestures: {
         _PanGestureRecognizer:
             GestureRecognizerFactoryWithHandlers<_PanGestureRecognizer>(
-          () => _PanGestureRecognizer(() => horizontalEdge, () => verticalEdge),
+          () => _PanGestureRecognizer(
+            () => horizontalEdge,
+            () => verticalEdge,
+            settings.edgeSlop,
+            settings.slop,
+          ),
           (instance) => instance //
             ..onStart = onPanStart
             ..onCancel = onPanCancel
@@ -114,9 +128,14 @@ class _PanGestureRecognizer extends PanGestureRecognizer {
   final ValueGetter<_Edge> horizontalEdge;
   final ValueGetter<_Edge> verticalEdge;
 
+  final double edgeSlop;
+  final double defaultSlop;
+
   _PanGestureRecognizer(
     this.horizontalEdge,
     this.verticalEdge,
+    this.edgeSlop,
+    this.defaultSlop,
   );
 
   @override
@@ -135,15 +154,15 @@ class _PanGestureRecognizer extends PanGestureRecognizer {
 
     // TODO(@melvspace): 10/02/24 research why this magic numbers works
     var ySlop = switch (verticalEdge()) {
-      _Edge.start when delta.dy > 0 => 4,
-      _Edge.end when delta.dy < 0 => 4,
-      _ => 24,
+      _Edge.start when delta.dy > 0 => edgeSlop,
+      _Edge.end when delta.dy < 0 => edgeSlop,
+      _ => defaultSlop,
     };
 
     var xSlop = switch (horizontalEdge()) {
-      _Edge.start when delta.dx > 0 => 4,
-      _Edge.end when delta.dx < 0 => 4,
-      _ => 24,
+      _Edge.start when delta.dx > 0 => edgeSlop,
+      _Edge.end when delta.dx < 0 => edgeSlop,
+      _ => defaultSlop,
     };
 
     final slop = delta.dx.abs() > delta.dy.abs() ? xSlop : ySlop;

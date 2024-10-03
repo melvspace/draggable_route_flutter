@@ -4,6 +4,7 @@ import 'package:draggable_route/src/theme/draggable_route_theme.dart';
 import 'package:flutter/widgets.dart';
 
 final kDefaultTheme = DraggableRouteTheme(
+  settings: kDefaultSettings,
   transitionDuration: const Duration(milliseconds: 300),
   transitionCurve: Curves.linear,
   transitionCurveOut: Curves.easeInOutCubic,
@@ -18,3 +19,5 @@ final kDefaultTheme = DraggableRouteTheme(
     tileMode: TileMode.decal,
   ),
 );
+
+const kDefaultSettings = DraggableRouteSettings(edgeSlop: 4, slop: 24);

@@ -44,11 +44,18 @@ class DraggableRouteTheme extends ThemeExtension<DraggableRouteTheme> {
 
 // #endregion
 
+// #region Other
+
+  final DraggableRouteSettings settings;
+
+// #endregion
+
   /// {@macro draggable_route.DraggableRouteTheme}
   const DraggableRouteTheme({
     required this.transitionDuration,
     required this.transitionCurve,
     this.borderRadius = BorderRadius.zero,
+    this.settings = kDefaultSettings,
     this.transitionCurveOut,
     this.backdropFilterBuilder,
     this.dissolveFilterBuilder,
@@ -73,4 +80,17 @@ class DraggableRouteTheme extends ThemeExtension<DraggableRouteTheme> {
   ) {
     return other ?? this;
   }
+}
+
+class DraggableRouteSettings {
+  /// drag slop in the middle of scrollable
+  final double slop;
+
+  /// drag slop on the edge on scrollable
+  final double edgeSlop;
+
+  const DraggableRouteSettings({
+    required this.slop,
+    required this.edgeSlop,
+  });
 }
