@@ -1,3 +1,10 @@
+## 0.4.2
+
+### Fixes 
+
+- fix scrollable conditions not re-calculated on scrollable size change
+
+
 ## 0.4.1
 
 ### Fixes 
