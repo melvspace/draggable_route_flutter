@@ -59,25 +59,27 @@ class _DragAreaState extends State<DragArea> {
       },
       child: ScrollConfiguration(
         behavior: const _DraggableScrollBehavior(),
-        child: NotificationListener<ScrollUpdateNotification>(
+        child: NotificationListener<Notification>(
           onNotification: (notification) {
-            final metrics = notification.metrics;
+            switch (notification) {
+              case ScrollMetricsNotification(:final metrics):
+              case ScrollUpdateNotification(:final metrics):
+                _Edge edge;
+                if (metrics.pixels == metrics.minScrollExtent) {
+                  edge = _Edge.start;
+                } else if (metrics.pixels == metrics.maxScrollExtent) {
+                  edge = _Edge.end;
+                } else {
+                  edge = _Edge.middle;
+                }
 
-            _Edge edge;
-            if (metrics.pixels == metrics.minScrollExtent) {
-              edge = _Edge.start;
-            } else if (metrics.pixels == metrics.maxScrollExtent) {
-              edge = _Edge.end;
-            } else {
-              edge = _Edge.middle;
-            }
+                switch (metrics.axis) {
+                  case Axis.vertical:
+                    verticalEdge = edge;
 
-            switch (metrics.axis) {
-              case Axis.vertical:
-                verticalEdge = edge;
-
-              case Axis.horizontal:
-                horizontalEdge = edge;
+                  case Axis.horizontal:
+                    horizontalEdge = edge;
+                }
             }
 
             return false;
