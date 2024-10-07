@@ -185,22 +185,24 @@ class DraggableRoute<T> extends PageRoute<T>
               );
             }
 
-            return LayoutBuilder(
-              builder: (context, constraints) => Transform.translate(
+            return ListenableBuilder(
+              listenable: _offset,
+              builder: (context, child) => Transform.translate(
                 offset: _offset.value,
-                child: NoSourceExitTransition(
-                  animation: animation,
-                  child: ClipPath(
-                    clipper: _RectWithNotchesClipper(
-                      borderRadius: borderRadius ??
-                          DraggableRouteTheme.of(context).borderRadius,
-                    ),
-                    child: _buildDragArea(
-                      context,
-                      animation,
-                      secondaryAnimation,
-                      child!,
-                    ),
+                child: child,
+              ),
+              child: NoSourceExitTransition(
+                animation: animation,
+                child: ClipPath(
+                  clipper: _RectWithNotchesClipper(
+                    borderRadius: borderRadius ??
+                        DraggableRouteTheme.of(context).borderRadius,
+                  ),
+                  child: _buildDragArea(
+                    context,
+                    animation,
+                    secondaryAnimation,
+                    child!,
                   ),
                 ),
               ),
@@ -222,72 +224,76 @@ class DraggableRoute<T> extends PageRoute<T>
           return child;
         },
         LayoutBuilder(
-          builder: (context, constraints) {
-            final startRO = source.findRenderObject() as RenderBox;
-            final startTransform = startRO.getTransformTo(null);
-            final rectTween = RectTween(
-              begin: Rect.fromLTWH(
-                startTransform.getTranslation().x,
-                startTransform.getTranslation().y,
-                startRO.size.width,
-                startRO.size.height,
-              ),
-              end: _offset.value & constraints.biggest,
-            );
+          builder: (context, constraints) => ListenableBuilder(
+            listenable: _offset,
+            builder: (context, child) {
+              final startRO = source.findRenderObject() as RenderBox;
+              final startTransform = startRO.getTransformTo(null);
+              final rectTween = RectTween(
+                begin: Rect.fromLTWH(
+                  startTransform.getTranslation().x,
+                  startTransform.getTranslation().y,
+                  startRO.size.width,
+                  startRO.size.height,
+                ),
+                end: _offset.value & constraints.biggest,
+              );
 
-            return Stack(
-              clipBehavior: Clip.none,
-              children: [
-                AnimatedBuilder(
-                  animation: animation,
-                  builder: (context, child) => Positioned.fromRect(
-                    rect: rectTween.evaluate(animation)!,
-                    child: child!,
-                  ),
-                  child: ClipPath(
-                    clipper: _RectWithNotchesClipper(
-                      influence: animation.value,
-                      borderRadius: borderRadius ??
-                          DraggableRouteTheme.of(context).borderRadius,
+              return Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  AnimatedBuilder(
+                    animation: animation,
+                    builder: (context, child) => Positioned.fromRect(
+                      rect: rectTween.evaluate(animation)!,
+                      child: child!,
                     ),
-                    child: FittedBox(
-                      alignment: Alignment.topCenter,
-                      fit: BoxFit.cover,
-                      child: ConstrainedBox(
-                        constraints: constraints,
-                        child: _buildDragArea(
-                          context,
-                          animation,
-                          secondaryAnimation,
-                          child,
+                    child: ClipPath(
+                      clipper: _RectWithNotchesClipper(
+                        influence: animation.value,
+                        borderRadius: borderRadius ??
+                            DraggableRouteTheme.of(context).borderRadius,
+                      ),
+                      child: child,
+                    ),
+                  ),
+                  AnimatedBuilder(
+                    animation: animation,
+                    builder: (context, child) => Positioned.fromRect(
+                      rect: rectTween.evaluate(animation)!,
+                      child: child!,
+                    ),
+                    child: IgnorePointer(
+                      child: FittedBox(
+                        alignment: Alignment.topCenter,
+                        child: FadeTransition(
+                          opacity: Tween<double>(begin: 1, end: 0)
+                              .animate(animation),
+                          child: SizedBox.fromSize(
+                            size: startRO.size,
+                            child: source.widget,
+                          ),
                         ),
                       ),
                     ),
                   ),
+                ],
+              );
+            },
+            child: FittedBox(
+              alignment: Alignment.topCenter,
+              fit: BoxFit.cover,
+              child: ConstrainedBox(
+                constraints: constraints,
+                child: _buildDragArea(
+                  context,
+                  animation,
+                  secondaryAnimation,
+                  child,
                 ),
-                AnimatedBuilder(
-                  animation: animation,
-                  builder: (context, child) => Positioned.fromRect(
-                    rect: rectTween.evaluate(animation)!,
-                    child: child!,
-                  ),
-                  child: IgnorePointer(
-                    child: FittedBox(
-                      alignment: Alignment.topCenter,
-                      child: FadeTransition(
-                        opacity:
-                            Tween<double>(begin: 1, end: 0).animate(animation),
-                        child: SizedBox.fromSize(
-                          size: startRO.size,
-                          child: source.widget,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
+              ),
+            ),
+          ),
         ),
       );
     }
@@ -347,13 +353,14 @@ class DraggableRoute<T> extends PageRoute<T>
     BuildContext context,
     Animation animation,
     Animation secondaryAnimation,
-    Widget child,
+    Widget? child,
   ) {
     return Stack(
       clipBehavior: Clip.none,
       children: [
         ..._buildNotches(context),
-        DragArea(child: child, settings: routeSettings),
+        if (child case Widget child)
+          DragArea(settings: routeSettings, child: child),
       ],
     );
   }
