@@ -1,3 +1,17 @@
+## 0.6.1
+
+### Fixes
+
+- fix threshold
+
+
+## 0.6.0
+
+### Features 
+
+- add custom scroll offset resolver widget to override subtree offset resolve
+
+
 ## 0.5.0
 
 ### Features 

@@ -1,4 +1,5 @@
 // ignore: depend_on_referenced_packages
+import 'package:provider/provider.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 import 'package:draggable_route/draggable_route.dart';
@@ -68,9 +69,26 @@ class _DragAreaState extends State<DragArea> {
         _Edge edge;
         final metrics = state.position;
 
-        if (metrics.pixels == metrics.minScrollExtent) {
+        var offset = (state.position.pixels - state.position.minScrollExtent) /
+            (state.position.maxScrollExtent - state.position.minScrollExtent);
+
+        DraggableRouteScrollResolverState? findCustomResolver(
+          BuildContext context,
+        ) {
+          final resolver = context.read<DraggableRouteScrollResolverState?>();
+          if (resolver == null) return null;
+          if (resolver.axis != state.position.axis) {
+            return findCustomResolver(resolver.context);
+          }
+
+          return resolver;
+        }
+
+        offset = findCustomResolver(state.context)?.offset() ?? offset;
+
+        if (offset == 0) {
           edge = _Edge.start;
-        } else if (metrics.pixels == metrics.maxScrollExtent) {
+        } else if (offset == 1) {
           edge = _Edge.end;
         } else {
           edge = _Edge.middle;
