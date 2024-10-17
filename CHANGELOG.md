@@ -1,3 +1,10 @@
+## 0.5.0
+
+### Features 
+
+- hit test scrollables to check when route can be dragged
+
+
 ## 0.4.2
 
 ### Fixes 
