@@ -1,97 +1,130 @@
 import 'package:draggable_route/draggable_route.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 void main() {
   runApp(const MainApp());
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
   const MainApp({super.key});
 
+  @override
+  State<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         body: SizedBox(
           width: double.infinity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Builder(
-                builder: (context) {
-                  return GestureDetector(
-                    onTap: () => Navigator.of(context).push(
-                      DraggableRoute(
-                        source: context,
-                        builder: (context) => const PageB(),
-                      ),
-                    ),
-                    child: const SizedBox(
-                      width: 300,
-                      height: 200,
-                      child: Card.filled(
-                        child: Center(child: Text('Open with Source')),
-                      ),
-                    ),
-                  );
-                },
-              ),
-              Builder(builder: (context) {
-                return GestureDetector(
-                  onTap: () => Navigator.of(context).push(
-                    DraggableRoute(
-                      builder: (context) => const PageB(),
-                    ),
-                  ),
-                  child: const SizedBox(
-                    width: 300,
-                    height: 200,
-                    child: Card.filled(
-                      child: Center(child: Text('Open without Source')),
+          child: SafeArea(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 8,
+                      children: [
+                        for (final platform in TargetPlatform.values)
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                              ),
+                              visualDensity: VisualDensity.compact,
+                            ),
+                            onPressed: () => setState(
+                              () =>
+                                  debugDefaultTargetPlatformOverride = platform,
+                            ),
+                            child: Text(platform.name),
+                          )
+                      ],
                     ),
                   ),
-                );
-              }),
-              Builder(
-                builder: (context) {
-                  return GestureDetector(
-                    onTap: () => Navigator.of(context).push(
-                      DraggableRoute(
-                        source: context,
-                        builder: (context) => const ScrollablePage(),
+                  Builder(
+                    builder: (context) {
+                      return GestureDetector(
+                        onTap: () => Navigator.of(context).push(
+                          DraggableRoute(
+                            source: context,
+                            builder: (context) => const PageB(),
+                          ),
+                        ),
+                        child: const SizedBox(
+                          width: 300,
+                          height: 200,
+                          child: Card.filled(
+                            child: Center(child: Text('Open with Source')),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  Builder(builder: (context) {
+                    return GestureDetector(
+                      onTap: () => Navigator.of(context).push(
+                        DraggableRoute(
+                          builder: (context) => const PageB(),
+                        ),
                       ),
-                    ),
-                    child: const SizedBox(
-                      width: 300,
-                      height: 200,
-                      child: Card.filled(
-                        child: Center(child: Text('Open Scrollable')),
+                      child: const SizedBox(
+                        width: 300,
+                        height: 200,
+                        child: Card.filled(
+                          child: Center(child: Text('Open without Source')),
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  }),
+                  Builder(
+                    builder: (context) {
+                      return GestureDetector(
+                        onTap: () => Navigator.of(context).push(
+                          DraggableRoute(
+                            source: context,
+                            builder: (context) => const ScrollablePage(),
+                          ),
+                        ),
+                        child: const SizedBox(
+                          width: 300,
+                          height: 200,
+                          child: Card.filled(
+                            child: Center(child: Text('Open Scrollable')),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  Builder(
+                    builder: (context) {
+                      return GestureDetector(
+                        onTap: () => Navigator.of(context).push(
+                          DraggableRoute(
+                            builder: (context) => const ScrollablePage(),
+                          ),
+                        ),
+                        child: const SizedBox(
+                          width: 300,
+                          height: 200,
+                          child: Card.filled(
+                            child: Center(
+                                child: Text('Open Scrollable without Source')),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
-              Builder(
-                builder: (context) {
-                  return GestureDetector(
-                    onTap: () => Navigator.of(context).push(
-                      DraggableRoute(
-                        builder: (context) => const ScrollablePage(),
-                      ),
-                    ),
-                    child: const SizedBox(
-                      width: 300,
-                      height: 200,
-                      child: Card.filled(
-                        child: Center(
-                            child: Text('Open Scrollable without Source')),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -113,10 +146,20 @@ class PageB extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  DraggableRoute(
+                    builder: (context) => const PageB(),
+                  ),
+                );
+              },
+              child: const Text("Push more"),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
               onPressed: () => Navigator.pop(context),
               child: const Text("Return"),
             ),
-            const SizedBox(height: 24),
           ],
         ),
       ),
