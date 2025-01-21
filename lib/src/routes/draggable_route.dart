@@ -173,7 +173,7 @@ class DraggableRoute<T> extends PageRoute<T> {
           listenable: _entered,
           builder: (context, child) {
             if (!_entered.value) {
-              return super.buildTransitions(
+              return _buildNoSourceTransition(
                 context,
                 animation,
                 secondaryAnimation,
@@ -293,6 +293,22 @@ class DraggableRoute<T> extends PageRoute<T> {
         ),
       );
     }
+  }
+
+  Widget _buildNoSourceTransition(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    final PageTransitionsTheme theme = Theme.of(context).pageTransitionsTheme;
+    return theme.buildTransitions<T>(
+      this,
+      context,
+      animation,
+      secondaryAnimation,
+      child,
+    );
   }
 
   List<Widget> _buildNotches(BuildContext context) {
