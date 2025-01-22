@@ -5,6 +5,24 @@
 - fix threshold
 
 
+## 1.0.0 (2025-01-22)
+
+
+### Features
+
+* add configurable theme ([af4b976](https://github.com/rIIh/draggable_route_flutter/commit/af4b976997ca016a3ad9207d9eb06d540988a65d))
+* add scroll offset custom resolver ([8c8fb11](https://github.com/rIIh/draggable_route_flutter/commit/8c8fb11901e0beb3275316211ebb9bbdac9ea5e3))
+* hit test scrollable to check draggability ([c12bec9](https://github.com/rIIh/draggable_route_flutter/commit/c12bec9f8d1b85f0d316c682cf8621903bb35a74))
+* make drag settings configurable ([8316886](https://github.com/rIIh/draggable_route_flutter/commit/83168866ae3fd7495d8cffc5708d44540c8a7c24))
+
+
+### Bug Fixes
+
+* fix unresponsive drag on iOS devices ([35968a3](https://github.com/rIIh/draggable_route_flutter/commit/35968a3060b36cfd7ab52b35d236b35e2f3fa7a3))
+* listen to scroll metrics notification to handle scrollable size change ([d03d942](https://github.com/rIIh/draggable_route_flutter/commit/d03d94283a6edd8a1de503812498e04d1e0ac86c))
+* make drag more responsive on iOS ([697e9d2](https://github.com/rIIh/draggable_route_flutter/commit/697e9d223028d27a3eb18aa3fac000f37dfab639))
+* remove print call ([6165042](https://github.com/rIIh/draggable_route_flutter/commit/6165042eec473c013cd9ff13a57acfca43b873ee))
+
 ## 0.6.0
 
 ### Features 
