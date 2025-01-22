@@ -23,6 +23,16 @@ class DraggableRouteTheme extends ThemeExtension<DraggableRouteTheme> {
 
 // #endregion
 
+// #region Cancelling dismiss
+
+  /// Curve for cancelled dismiss animation
+  final Curve cancelDismissAnimationCurve;
+
+  /// Duration of cancelled dismiss animation
+  final Duration cancelDismissAnimationDuration;
+
+// #endregion
+
 // #region Filters
 
   /// Background filter animation builder
@@ -44,6 +54,16 @@ class DraggableRouteTheme extends ThemeExtension<DraggableRouteTheme> {
 
 // #endregion
 
+// #region Dismissing
+
+  /// Minimal velocity to pop route
+  final double dismissVelocity;
+
+  /// Minimal distance to pop route
+  final double dismissDistance;
+
+// #endregion
+
 // #region Other
 
   final DraggableRouteSettings settings;
@@ -59,6 +79,10 @@ class DraggableRouteTheme extends ThemeExtension<DraggableRouteTheme> {
     this.transitionCurveOut,
     this.backdropFilterBuilder,
     this.dissolveFilterBuilder,
+    this.cancelDismissAnimationCurve = Curves.easeOutCubic,
+    this.cancelDismissAnimationDuration = const Duration(milliseconds: 200),
+    this.dismissVelocity = 4,
+    this.dismissDistance = 90,
   });
 
   /// {@macro draggable_route.DraggableRouteTheme}

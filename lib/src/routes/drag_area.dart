@@ -1,11 +1,10 @@
-// ignore: depend_on_referenced_packages
-import 'package:provider/provider.dart';
-import 'package:vector_math/vector_math_64.dart';
-
 import 'package:draggable_route/draggable_route.dart';
 import 'package:draggable_route/src/gestures/monodrag.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+// ignore: depend_on_referenced_packages
+import 'package:provider/provider.dart';
+import 'package:vector_math/vector_math_64.dart';
 
 class DragArea extends StatefulWidget {
   final Widget child;
@@ -196,19 +195,19 @@ class _DragAreaState extends State<DragArea> {
   }
 
   void onPanStart(DragStartDetails details) {
-    route.handleDragStart(details);
+    route.handleDragStart(context, details);
   }
 
   void onPanCancel() {
-    route.handleDragCancel();
+    route.handleDragCancel(context);
   }
 
   void onPanUpdate(DragUpdateDetails details) {
-    route.handleDragUpdate(details);
+    route.handleDragUpdate(context, details);
   }
 
   void onPanEnd(DragEndDetails details) {
-    route.handleDragEnd(details);
+    route.handleDragEnd(context, details);
   }
 
   @override

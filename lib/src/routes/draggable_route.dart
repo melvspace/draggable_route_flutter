@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:draggable_route/src/routes/drag_area.dart';
 import 'package:draggable_route/src/routes/no_source_exit_transition.dart';
 import 'package:draggable_route/src/theme/draggable_route_theme.dart';
+import 'package:draggable_route/src/utility/squared_num_extension.dart';
 import 'package:flutter/material.dart';
 
 /// Route with instagram-like transition from other widgets.
@@ -59,21 +60,20 @@ class DraggableRoute<T> extends PageRoute<T> {
   Offset _dragEndOffset = Offset.zero;
   late final _cancelAnimationController = AnimationController(
     vsync: navigator!,
-    duration: const Duration(milliseconds: 200),
   );
 
-  void handleDragStart(DragStartDetails details) {
+  void handleDragStart(BuildContext context, DragStartDetails details) {
     navigator!.didStartUserGesture();
     _offset.value = Offset.zero;
   }
 
-  void handleDragUpdate(DragUpdateDetails details) {
+  void handleDragUpdate(BuildContext context, DragUpdateDetails details) {
     _offset.value += details.delta;
     _velocity = details.delta;
-    _fling();
+    _fling(context);
   }
 
-  void handleDragCancel() {
+  void handleDragCancel(BuildContext context) {
     if (!isActive) return;
 
     if (navigator!.userGestureInProgress) {
@@ -85,30 +85,42 @@ class DraggableRoute<T> extends PageRoute<T> {
     controller?.value = 1.0;
   }
 
-  void handleDragEnd(DragEndDetails details) {
+  void handleDragEnd(BuildContext context, DragEndDetails details) {
     navigator!.didStopUserGesture();
-    _fling();
+    _fling(context);
   }
 
-  void _fling() {
+  void _fling(BuildContext context) {
     if (!isActive) return;
+    final theme = DraggableRouteTheme.of(context);
 
     if (!navigator!.userGestureInProgress) {
-      if (_offset.value.distanceSquared > 8000 ||
-          _velocity.distanceSquared > 100) {
+      final dismissVelocity = theme.dismissVelocity;
+      final dismissDistance = theme.dismissDistance;
+
+      final isFling = _velocity.distanceSquared > dismissVelocity.squared;
+      final isFarAway = _offset.value.distanceSquared > dismissDistance.squared;
+      if (isFarAway || isFling) {
+        // pop route
         _dragEndOffset = Offset.zero;
         navigator!.pop();
       } else {
+        // run dismiss operation
+        controller?.value = 0.999;
         _dragEndOffset = _offset.value;
         _offset.value = Offset.zero;
         _velocity = Offset.zero;
-        controller?.value = 0.999;
 
         _cancelAnimationController.reset();
         _cancelAnimationController
-            .animateTo(1, curve: Curves.easeOutCubic)
+            .animateTo(
+          1.0,
+          curve: theme.cancelDismissAnimationCurve,
+          duration: theme.cancelDismissAnimationDuration,
+        )
             .then((_) {
           _dragEndOffset = Offset.zero;
+          controller?.value = 1.0;
         });
       }
     } else {
@@ -132,6 +144,12 @@ class DraggableRoute<T> extends PageRoute<T> {
     }
 
     controller!.addStatusListener(handleEntered);
+  }
+
+  @override
+  void dispose() {
+    _cancelAnimationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -196,10 +214,27 @@ class DraggableRoute<T> extends PageRoute<T> {
               );
             }
 
-            return ListenableBuilder(
-              listenable: _offset,
-              builder: (context, child) => Transform.translate(
-                offset: _offset.value,
+            return AnimatedBuilder(
+              animation: _cancelAnimationController,
+              builder: (context, child) => ListenableBuilder(
+                listenable: _offset,
+                builder: (context, child) {
+                  var offset = _offset.value;
+                  if (_cancelAnimationController.isAnimating) {
+                    offset = Tween(
+                      begin: _dragEndOffset,
+                      end: _offset.value,
+                    ).evaluate(_cancelAnimationController);
+                  }
+
+                  return IgnorePointer(
+                    ignoring: _cancelAnimationController.isAnimating,
+                    child: Transform.translate(
+                      offset: offset,
+                      child: child,
+                    ),
+                  );
+                },
                 child: child,
               ),
               child: NoSourceExitTransition(
