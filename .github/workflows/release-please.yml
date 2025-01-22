@@ -16,3 +16,5 @@ jobs:
       - uses: googleapis/release-please-action@v4
         with:
           release-type: dart
+          bump-patch-for-minor-pre-major: Yes
+          bump-minor-pre-major: Yes
