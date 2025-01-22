@@ -5,6 +5,13 @@
 - fix threshold
 
 
+## [0.6.2](https://github.com/rIIh/draggable_route_flutter/compare/v0.6.1...v0.6.2) (2025-01-22)
+
+
+### Bug Fixes
+
+* remove previous route transition ([#3](https://github.com/rIIh/draggable_route_flutter/issues/3)) ([01c5497](https://github.com/rIIh/draggable_route_flutter/commit/01c54977e4634a380c9efc7027f4b31a7603e57c))
+
 ## 0.6.0
 
 ### Features 
