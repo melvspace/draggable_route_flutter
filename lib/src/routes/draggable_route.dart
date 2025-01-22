@@ -56,6 +56,12 @@ class DraggableRoute<T> extends PageRoute<T> {
   final _offset = ValueNotifier(Offset.zero);
   var _velocity = Offset.zero;
 
+  Offset _dragEndOffset = Offset.zero;
+  late final _cancelAnimationController = AnimationController(
+    vsync: navigator!,
+    duration: const Duration(milliseconds: 200),
+  );
+
   void handleDragStart(DragStartDetails details) {
     navigator!.didStartUserGesture();
     _offset.value = Offset.zero;
@@ -88,13 +94,22 @@ class DraggableRoute<T> extends PageRoute<T> {
     if (!isActive) return;
 
     if (!navigator!.userGestureInProgress) {
-      if (_offset.value.distanceSquared > 100 ||
+      if (_offset.value.distanceSquared > 8000 ||
           _velocity.distanceSquared > 100) {
+        _dragEndOffset = Offset.zero;
         navigator!.pop();
       } else {
+        _dragEndOffset = _offset.value;
         _offset.value = Offset.zero;
         _velocity = Offset.zero;
-        controller?.value = 1.0;
+        controller?.value = 0.999;
+
+        _cancelAnimationController.reset();
+        _cancelAnimationController
+            .animateTo(1, curve: Curves.easeOutCubic)
+            .then((_) {
+          _dragEndOffset = Offset.zero;
+        });
       }
     } else {
       if (_offset.value != Offset.zero) {
@@ -223,15 +238,23 @@ class DraggableRoute<T> extends PageRoute<T> {
           builder: (context, constraints) => ListenableBuilder(
             listenable: _offset,
             builder: (context, child) {
+              final bool dismissCanceled = _dragEndOffset != Offset.zero;
               final startRO = source.findRenderObject() as RenderBox;
               final startTransform = startRO.getTransformTo(null);
               final rectTween = RectTween(
-                begin: Rect.fromLTWH(
-                  startTransform.getTranslation().x,
-                  startTransform.getTranslation().y,
-                  startRO.size.width,
-                  startRO.size.height,
-                ),
+                begin: dismissCanceled
+                    ? Rect.fromLTWH(
+                        _dragEndOffset.dx,
+                        _dragEndOffset.dy,
+                        constraints.biggest.width,
+                        constraints.biggest.height,
+                      )
+                    : Rect.fromLTWH(
+                        startTransform.getTranslation().x,
+                        startTransform.getTranslation().y,
+                        startRO.size.width,
+                        startRO.size.height,
+                      ),
                 end: _offset.value & constraints.biggest,
               );
 
@@ -239,9 +262,15 @@ class DraggableRoute<T> extends PageRoute<T> {
                 clipBehavior: Clip.none,
                 children: [
                   AnimatedBuilder(
-                    animation: animation,
+                    animation: dismissCanceled
+                        ? _cancelAnimationController
+                        : animation,
                     builder: (context, child) => Positioned.fromRect(
-                      rect: rectTween.evaluate(animation)!,
+                      rect: rectTween.evaluate(
+                        dismissCanceled
+                            ? _cancelAnimationController
+                            : animation,
+                      )!,
                       child: child!,
                     ),
                     child: ClipPath(
@@ -254,9 +283,15 @@ class DraggableRoute<T> extends PageRoute<T> {
                     ),
                   ),
                   AnimatedBuilder(
-                    animation: animation,
+                    animation: dismissCanceled
+                        ? _cancelAnimationController
+                        : animation,
                     builder: (context, child) => Positioned.fromRect(
-                      rect: rectTween.evaluate(animation)!,
+                      rect: rectTween.evaluate(
+                        dismissCanceled
+                            ? _cancelAnimationController
+                            : animation,
+                      )!,
                       child: child!,
                     ),
                     child: IgnorePointer(
