@@ -6,8 +6,7 @@ import 'package:draggable_route/src/theme/draggable_route_theme.dart';
 import 'package:flutter/material.dart';
 
 /// Route with instagram-like transition from other widgets.
-class DraggableRoute<T> extends PageRoute<T>
-    with MaterialRouteTransitionMixin<T> {
+class DraggableRoute<T> extends PageRoute<T> {
   static DraggableRoute of(BuildContext context) {
     return ModalRoute.of(context) as DraggableRoute;
   }
@@ -127,15 +126,12 @@ class DraggableRoute<T> extends PageRoute<T>
   String get debugLabel => '${super.debugLabel}(${settings.name})';
 
   @override
-  Widget buildContent(BuildContext context) => builder(context);
-
-  @override
   Widget buildPage(
     BuildContext context,
     Animation<double> animation,
     Animation<double> secondaryAnimation,
   ) {
-    final Widget content = buildContent(context);
+    final Widget content = builder(context);
 
     return Semantics(
       scopesRoute: true,
@@ -177,7 +173,7 @@ class DraggableRoute<T> extends PageRoute<T>
           listenable: _entered,
           builder: (context, child) {
             if (!_entered.value) {
-              return super.buildTransitions(
+              return _buildNoSourceTransition(
                 context,
                 animation,
                 secondaryAnimation,
@@ -299,6 +295,22 @@ class DraggableRoute<T> extends PageRoute<T>
     }
   }
 
+  Widget _buildNoSourceTransition(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    final PageTransitionsTheme theme = Theme.of(context).pageTransitionsTheme;
+    return theme.buildTransitions<T>(
+      this,
+      context,
+      animation,
+      secondaryAnimation,
+      child,
+    );
+  }
+
   List<Widget> _buildNotches(BuildContext context) {
     final borderRadius = this.borderRadius ?? //
         DraggableRouteTheme.of(context).borderRadius;
@@ -364,6 +376,12 @@ class DraggableRoute<T> extends PageRoute<T>
       ],
     );
   }
+
+  @override
+  Color? get barrierColor => Colors.transparent;
+
+  @override
+  String? get barrierLabel => null;
 }
 
 class _RectWithNotchesClipper extends CustomClipper<Path> {
