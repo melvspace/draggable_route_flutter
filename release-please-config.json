@@ -1,13 +1,10 @@
 {
-  "packages": {
-    ".": {
-      "changelog-path": "CHANGELOG.md",
-      "release-type": "dart",
-      "bump-minor-pre-major": false,
-      "bump-patch-for-minor-pre-major": false,
-      "draft": false,
-      "prerelease": false
-    }
-  },
+  "changelog-path": "CHANGELOG.md",
+  "release-type": "dart",
+  "bump-minor-pre-major": true,
+  "bump-patch-for-minor-pre-major": true,
+  "draft": false,
+  "prerelease": false,
+  "always-update": true,
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
 }
