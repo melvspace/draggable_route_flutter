@@ -1,3 +1,11 @@
+## [0.6.3](https://github.com/rIIh/draggable_route_flutter/compare/v0.6.2...v0.6.3) (2025-02-06)
+
+
+### Bug Fixes
+
+* fix possible null exception when source render object becomes detached ([bdab5dd](https://github.com/rIIh/draggable_route_flutter/commit/bdab5dd8576679f0dcf04b3be24d58ebd96e29c3))
+
+
 ## [0.6.2](https://github.com/rIIh/draggable_route_flutter/compare/v0.6.1...v0.6.2) (2025-01-22)
 
 
