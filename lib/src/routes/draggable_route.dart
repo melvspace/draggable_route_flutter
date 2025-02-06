@@ -190,7 +190,21 @@ class DraggableRoute<T> extends PageRoute<T> {
 
     final backdropFilterBuilder = theme.backdropFilterBuilder;
 
-    if (source == null || !source.mounted) {
+    Rect? startTransitionRect;
+    if (source != null && source.mounted) {
+      final startRO = source.findRenderObject() as RenderBox;
+      if (startRO.attached) {
+        late final startTransform = startRO.getTransformTo(null);
+        startTransitionRect = Rect.fromLTWH(
+          startTransform.getTranslation().x,
+          startTransform.getTranslation().y,
+          startRO.size.width,
+          startRO.size.height,
+        );
+      }
+    }
+
+    if (source == null || !source.mounted || startTransitionRect == null) {
       return _wrap(
         (context, child) {
           if (backdropFilterBuilder != null) {
@@ -258,6 +272,8 @@ class DraggableRoute<T> extends PageRoute<T> {
         ),
       );
     } else {
+      final startRect = startTransitionRect;
+
       return _wrap(
         (context, child) {
           if (backdropFilterBuilder != null) {
@@ -274,8 +290,7 @@ class DraggableRoute<T> extends PageRoute<T> {
             listenable: _offset,
             builder: (context, child) {
               final bool dismissCanceled = _dragEndOffset != Offset.zero;
-              final startRO = source.findRenderObject() as RenderBox;
-              final startTransform = startRO.getTransformTo(null);
+
               final rectTween = RectTween(
                 begin: dismissCanceled
                     ? Rect.fromLTWH(
@@ -284,12 +299,7 @@ class DraggableRoute<T> extends PageRoute<T> {
                         constraints.biggest.width,
                         constraints.biggest.height,
                       )
-                    : Rect.fromLTWH(
-                        startTransform.getTranslation().x,
-                        startTransform.getTranslation().y,
-                        startRO.size.width,
-                        startRO.size.height,
-                      ),
+                    : startRect,
                 end: _offset.value & constraints.biggest,
               );
 
@@ -336,7 +346,7 @@ class DraggableRoute<T> extends PageRoute<T> {
                           opacity: Tween<double>(begin: 1, end: 0)
                               .animate(animation),
                           child: SizedBox.fromSize(
-                            size: startRO.size,
+                            size: startRect.size,
                             child: source.widget,
                           ),
                         ),
