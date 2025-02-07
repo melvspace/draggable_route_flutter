@@ -82,7 +82,9 @@ class DraggableRoute<T> extends PageRoute<T> {
 
     _offset.value = Offset.zero;
     _velocity = Offset.zero;
-    controller?.value = 1.0;
+    if (context.mounted) {
+      controller?.value = 1.0;
+    }
   }
 
   void handleDragEnd(BuildContext context, DragEndDetails details) {
@@ -192,16 +194,18 @@ class DraggableRoute<T> extends PageRoute<T> {
 
     Rect? startTransitionRect;
     if (source != null && source.mounted) {
-      final startRO = source.findRenderObject() as RenderBox;
-      if (startRO.attached) {
-        late final startTransform = startRO.getTransformTo(null);
-        startTransitionRect = Rect.fromLTWH(
-          startTransform.getTranslation().x,
-          startTransform.getTranslation().y,
-          startRO.size.width,
-          startRO.size.height,
-        );
-      }
+      try {
+        final startRO = source.findRenderObject() as RenderBox;
+        if (startRO.attached) {
+          late final startTransform = startRO.getTransformTo(null);
+          startTransitionRect = Rect.fromLTWH(
+            startTransform.getTranslation().x,
+            startTransform.getTranslation().y,
+            startRO.size.width,
+            startRO.size.height,
+          );
+        }
+      } on FlutterError {/* ignore flutter errors due to inconsistency */}
     }
 
     if (source == null || !source.mounted || startTransitionRect == null) {
