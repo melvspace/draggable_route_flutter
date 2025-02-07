@@ -1,3 +1,14 @@
+# Changelog
+
+
+## [0.6.4](https://github.com/rIIh/draggable_route_flutter/compare/v0.6.3...v0.6.4) (2025-02-07)
+
+
+### Bug Fixes
+
+* fix flutter errors when route is rapidly pushed and popped ([2d560b6](https://github.com/rIIh/draggable_route_flutter/commit/2d560b67e3b88fd73022811509c2292b5257ed28))
+
+
 ## [0.6.3](https://github.com/rIIh/draggable_route_flutter/compare/v0.6.2...v0.6.3) (2025-02-06)
 
 
