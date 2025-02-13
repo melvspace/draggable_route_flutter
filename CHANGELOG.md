@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [0.7.0](https://github.com/rIIh/draggable_route_flutter/compare/v0.6.4...v0.7.0) (2025-02-13)
+
+
+### Features
+
+* dismissDistance and dismissVelocity are configurable in runtime settings ([#16](https://github.com/rIIh/draggable_route_flutter/issues/16)) ([e9280c7](https://github.com/rIIh/draggable_route_flutter/commit/e9280c7de975895d578f0d0965bca83f5fef431f))
+
 ## [0.6.4](https://github.com/rIIh/draggable_route_flutter/compare/v0.6.3...v0.6.4) (2025-02-07)
 
 
