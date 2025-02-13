@@ -126,15 +126,17 @@ class DraggableRouteSettings {
     this.dismissVelocity,
   });
 
-  DraggableRouteSettings copyWith(
-      {double? slop,
-      double? edgeSlop,
-      double? dismissDistance,
-      double? dismissVelocity}) {
+  DraggableRouteSettings copyWith({
+    double? slop,
+    double? edgeSlop,
+    double? dismissDistance,
+    double? dismissVelocity,
+  }) {
     return DraggableRouteSettings(
-        slop: slop ?? this.slop,
-        edgeSlop: edgeSlop ?? this.edgeSlop,
-        dismissVelocity: dismissVelocity ?? this.dismissVelocity,
-        dismissDistance: dismissDistance ?? this.dismissDistance);
+      slop: slop ?? this.slop,
+      edgeSlop: edgeSlop ?? this.edgeSlop,
+      dismissVelocity: dismissVelocity ?? this.dismissVelocity,
+      dismissDistance: dismissDistance ?? this.dismissDistance,
+    );
   }
 }
