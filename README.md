@@ -62,3 +62,7 @@ Navigator.of(context).push(
 ## Additional information
 
 Feel free to contribute :-)
+
+## Meta
+
+![Star History Chart](https://api.star-history.com/svg?repos=rIIh/draggable_route_flutter&type=Date)
