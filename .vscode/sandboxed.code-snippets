@@ -1,0 +1,30 @@
+{
+  "Meta + Story": {
+    "prefix": "metastory",
+    "description": "Creates a new Sandbox Story with default Meta",
+    "body": [
+      "import 'package:flutter/widgets.dart';",
+      "import 'package:sandboxed_core/sandboxed_core.dart';",
+      "",
+      "Meta get meta => Meta<${1:Widget}>();",
+      "",
+      "Story get $${2:Default} => Story($0);"
+    ]
+  },
+  "Story": {
+    "prefix": "story",
+    "description": "Creates a new Sandbox Story",
+    "body": [
+      "Story get $${2:Default} => Story($0);"
+    ]
+  },
+  "Story Config": {
+    "prefix": "storyconfig",
+    "description": "Creates a global story config",
+    "body": [
+      "Config get config => Config(",
+      "  module: '',",
+      ");",
+    ]
+  },
+}
