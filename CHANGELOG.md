@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [0.7.1](https://github.com/melvspace/draggable_route_flutter/compare/v0.7.0...v0.7.1) (2025-09-25)
+
+
+### Bug Fixes
+
+* fix state error in rare scenarios ([cf7bbdc](https://github.com/melvspace/draggable_route_flutter/commit/cf7bbdcb984b68142762c54d4efdf66670b953b7))
+
 ## [0.7.0](https://github.com/rIIh/draggable_route_flutter/compare/v0.6.4...v0.7.0) (2025-02-13)
 
 
