@@ -207,7 +207,15 @@ class DraggableRoute<T> extends PageRoute<T> {
             startRO.size.height,
           );
         }
-      } on FlutterError {/* ignore flutter errors due to inconsistency */}
+      } on FlutterError {
+        /* ignore flutter errors due to inconsistency */
+      } on StateError catch (e) {
+        if (e.message.contains("RenderBox was not laid out")) {
+          /* ignore flutter errors due to inconsistency */
+        } else {
+          rethrow;
+        }
+      }
     }
 
     if (source == null || !source.mounted || startTransitionRect == null) {
