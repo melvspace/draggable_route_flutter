@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [0.7.2](https://github.com/melvspace/draggable_route_flutter/compare/v0.7.1...v0.7.2) (2025-09-25)
+
+
+### Bug Fixes
+
+* ignore asserting errors as well due to inconsistency in widget lifecycle ([b3ebc0b](https://github.com/melvspace/draggable_route_flutter/commit/b3ebc0bd411acf36a31353b469a0f33c0c21a9a2))
+
 ## [0.7.1](https://github.com/melvspace/draggable_route_flutter/compare/v0.7.0...v0.7.1) (2025-09-25)
 
 
