@@ -209,6 +209,8 @@ class DraggableRoute<T> extends PageRoute<T> {
         }
       } on FlutterError {
         /* ignore flutter errors due to inconsistency */
+      } on AssertionError {
+        /* ignore flutter errors due to inconsistency */
       } on StateError catch (e) {
         if (e.message.contains("RenderBox was not laid out")) {
           /* ignore flutter errors due to inconsistency */
