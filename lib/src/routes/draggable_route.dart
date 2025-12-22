@@ -118,14 +118,14 @@ class DraggableRoute<T> extends PageRoute<T> {
         _cancelAnimationController.reset();
         _cancelAnimationController
             .animateTo(
-              1.0,
-              curve: theme.cancelDismissAnimationCurve,
-              duration: theme.cancelDismissAnimationDuration,
-            )
+          1.0,
+          curve: theme.cancelDismissAnimationCurve,
+          duration: theme.cancelDismissAnimationDuration,
+        )
             .then((_) {
-              _dragEndOffset = Offset.zero;
-              controller?.value = 1.0;
-            });
+          _dragEndOffset = Offset.zero;
+          controller?.value = 1.0;
+        });
       }
     } else {
       if (_offset.value != Offset.zero) {
@@ -279,8 +279,7 @@ class DraggableRoute<T> extends PageRoute<T> {
                 animation: animation,
                 child: ClipPath(
                   clipper: _RectWithNotchesClipper(
-                    borderRadius:
-                        borderRadius ??
+                    borderRadius: borderRadius ??
                         DraggableRouteTheme.of(context).borderRadius,
                   ),
                   child: _buildDragArea(
@@ -346,8 +345,7 @@ class DraggableRoute<T> extends PageRoute<T> {
                     child: ClipPath(
                       clipper: _RectWithNotchesClipper(
                         influence: animation.value,
-                        borderRadius:
-                            borderRadius ??
+                        borderRadius: borderRadius ??
                             DraggableRouteTheme.of(context).borderRadius,
                       ),
                       child: child,
@@ -420,8 +418,7 @@ class DraggableRoute<T> extends PageRoute<T> {
   }
 
   List<Widget> _buildNotches(BuildContext context) {
-    final borderRadius =
-        this.borderRadius ?? //
+    final borderRadius = this.borderRadius ?? //
         DraggableRouteTheme.of(context).borderRadius;
 
     return [
@@ -502,12 +499,11 @@ class _RectWithNotchesClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     final path = Path();
-    final topNotch =
-        max(borderRadius.topLeft.y, borderRadius.topRight.y) * //
+    final topNotch = max(borderRadius.topLeft.y, borderRadius.topRight.y) * //
         influence;
     final bottomNotch =
         max(borderRadius.bottomLeft.y, borderRadius.bottomRight.y) * //
-        influence;
+            influence;
 
     path.addRRect(
       RRect.fromRectAndCorners(
@@ -530,8 +526,6 @@ class _RectWithNotchesClipper extends CustomClipper<Path> {
 }
 
 Widget _wrap(
-  Widget Function(BuildContext context, Widget child) builder,
-  Widget child,
-) {
+    Widget Function(BuildContext context, Widget child) builder, Widget child) {
   return Builder(builder: (context) => builder(context, child));
 }
