@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [0.7.3](https://github.com/melvspace/draggable_route_flutter/compare/v0.7.2...v0.7.3) (2025-12-22)
+
+
+### Bug Fixes
+
+* **android:** fix android system pop gesture bug ([#20](https://github.com/melvspace/draggable_route_flutter/issues/20)) ([227c024](https://github.com/melvspace/draggable_route_flutter/commit/227c0243ae065bbdcbcd1bbdc85c8f9391d3e711))
+
 ## [0.7.2](https://github.com/melvspace/draggable_route_flutter/compare/v0.7.1...v0.7.2) (2025-09-25)
 
 
