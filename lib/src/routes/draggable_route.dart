@@ -270,7 +270,10 @@ class DraggableRoute<T> extends PageRoute<T> {
 
                   return IgnorePointer(
                     ignoring: _cancelAnimationController.isAnimating,
-                    child: Transform.translate(offset: offset, child: child),
+                    child: Transform.translate(
+                      offset: offset,
+                      child: child,
+                    ),
                   );
                 },
                 child: child,
@@ -367,10 +370,8 @@ class DraggableRoute<T> extends PageRoute<T> {
                       child: FittedBox(
                         alignment: Alignment.topCenter,
                         child: FadeTransition(
-                          opacity: Tween<double>(
-                            begin: 1,
-                            end: 0,
-                          ).animate(animation),
+                          opacity: Tween<double>(begin: 1, end: 0)
+                              .animate(animation),
                           child: SizedBox.fromSize(
                             size: startRect.size,
                             child: source.widget,
@@ -494,7 +495,10 @@ class _RectWithNotchesClipper extends CustomClipper<Path> {
   final BorderRadius borderRadius;
   final double influence;
 
-  _RectWithNotchesClipper({required this.borderRadius, this.influence = 1.0});
+  _RectWithNotchesClipper({
+    required this.borderRadius,
+    this.influence = 1.0,
+  });
 
   @override
   Path getClip(Size size) {
@@ -527,5 +531,7 @@ class _RectWithNotchesClipper extends CustomClipper<Path> {
 
 Widget _wrap(
     Widget Function(BuildContext context, Widget child) builder, Widget child) {
-  return Builder(builder: (context) => builder(context, child));
+  return Builder(
+    builder: (context) => builder(context, child),
+  );
 }

@@ -567,29 +567,23 @@ abstract class DragGestureRecognizer extends OneSequenceGestureRecognizer {
     final double dx, dy;
     if (axis == _DragDirection.horizontal) {
       dx = _resolveDelta(
-        pointer: pointer,
-        axis: _DragDirection.horizontal,
-        localDelta: localDelta,
-      );
+          pointer: pointer,
+          axis: _DragDirection.horizontal,
+          localDelta: localDelta);
       assert(dx.abs() <= localDelta.dx.abs());
       dy = 0.0;
     } else if (axis == _DragDirection.vertical) {
       dx = 0.0;
       dy = _resolveDelta(
-        pointer: pointer,
-        axis: _DragDirection.vertical,
-        localDelta: localDelta,
-      );
+          pointer: pointer,
+          axis: _DragDirection.vertical,
+          localDelta: localDelta);
       assert(dy.abs() <= localDelta.dy.abs());
     } else {
       final double averageX = _resolveDeltaForPanGesture(
-        axis: _DragDirection.horizontal,
-        localDelta: localDelta,
-      );
+          axis: _DragDirection.horizontal, localDelta: localDelta);
       final double averageY = _resolveDeltaForPanGesture(
-        axis: _DragDirection.vertical,
-        localDelta: localDelta,
-      );
+          axis: _DragDirection.vertical, localDelta: localDelta);
       final Offset updatedDelta =
           Offset(averageX, averageY) - _lastUpdatedDeltaForPan;
       _lastUpdatedDeltaForPan = Offset(averageX, averageY);
@@ -618,15 +612,9 @@ abstract class DragGestureRecognizer extends OneSequenceGestureRecognizer {
       return delta;
     } else {
       final double maxSumDelta = _getSumDelta(
-        pointer: maxSumDeltaPointer!,
-        positive: positive,
-        axis: axis,
-      );
-      final double curPointerSumDelta = _getSumDelta(
-        pointer: pointer,
-        positive: positive,
-        axis: axis,
-      );
+          pointer: maxSumDeltaPointer!, positive: positive, axis: axis);
+      final double curPointerSumDelta =
+          _getSumDelta(pointer: pointer, positive: positive, axis: axis);
       if (positive) {
         if (curPointerSumDelta + delta > maxSumDelta) {
           return curPointerSumDelta + delta - maxSumDelta;
@@ -698,10 +686,8 @@ abstract class DragGestureRecognizer extends OneSequenceGestureRecognizer {
           : (event.localPosition +
               (event as PointerPanZoomUpdateEvent).localPan);
       _finalPosition = OffsetPair(local: localPosition, global: position);
-      final Offset resolvedDelta = _resolveLocalDeltaForMultitouch(
-        event.pointer,
-        localDelta,
-      );
+      final Offset resolvedDelta =
+          _resolveLocalDeltaForMultitouch(event.pointer, localDelta);
       switch (_state) {
         case _DragState.ready || _DragState.possible:
           _pendingDragOffset += OffsetPair(local: localDelta, global: delta);
@@ -712,15 +698,13 @@ abstract class DragGestureRecognizer extends OneSequenceGestureRecognizer {
               ? null
               : Matrix4.tryInvert(event.transform!);
           _globalDistanceMoved += PointerEvent.transformDeltaViaPositions(
-                transform: localToGlobalTransform,
-                untransformedDelta: movedLocally,
-                untransformedEndPosition: localPosition,
-              ).distance *
+                      transform: localToGlobalTransform,
+                      untransformedDelta: movedLocally,
+                      untransformedEndPosition: localPosition)
+                  .distance *
               (_getPrimaryValueFromOffset(movedLocally) ?? 1).sign;
           if (hasSufficientGlobalDistanceToAccept(
-            event.kind,
-            gestureSettings?.touchSlop,
-          )) {
+              event.kind, gestureSettings?.touchSlop)) {
             _hasDragThresholdBeenMet = true;
             if (_acceptedActivePointers.contains(event.pointer)) {
               _checkDrag(event.pointer);
@@ -846,10 +830,8 @@ abstract class DragGestureRecognizer extends OneSequenceGestureRecognizer {
         untransformedDelta: localUpdateDelta,
         transform: localToGlobal,
       );
-      final OffsetPair updateDelta = OffsetPair(
-        local: localUpdateDelta,
-        global: globalUpdateDelta,
-      );
+      final OffsetPair updateDelta =
+          OffsetPair(local: localUpdateDelta, global: globalUpdateDelta);
       final OffsetPair correctedPosition =
           _initialPosition + updateDelta; // Only adds delta for down behaviour
       _checkUpdate(
@@ -921,11 +903,8 @@ abstract class DragGestureRecognizer extends OneSequenceGestureRecognizer {
       localPosition: _finalPosition.local,
     );
 
-    invokeCallback<void>(
-      'onEnd',
-      () => onEnd!(details!),
-      debugReport: debugReport,
-    );
+    invokeCallback<void>('onEnd', () => onEnd!(details!),
+        debugReport: debugReport);
   }
 
   void _checkCancel() {
@@ -944,8 +923,7 @@ abstract class DragGestureRecognizer extends OneSequenceGestureRecognizer {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(
-      EnumProperty<DragStartBehavior>('start behavior', dragStartBehavior),
-    );
+        EnumProperty<DragStartBehavior>('start behavior', dragStartBehavior));
   }
 }
 
@@ -980,18 +958,13 @@ class VerticalDragGestureRecognizer extends DragGestureRecognizer {
 
   @override
   DragEndDetails? _considerFling(
-    VelocityEstimate estimate,
-    PointerDeviceKind kind,
-  ) {
+      VelocityEstimate estimate, PointerDeviceKind kind) {
     if (!isFlingGesture(estimate, kind)) {
       return null;
     }
     final double maxVelocity = maxFlingVelocity ?? kMaxFlingVelocity;
-    final double dy = clampDouble(
-      estimate.pixelsPerSecond.dy,
-      -maxVelocity,
-      maxVelocity,
-    );
+    final double dy =
+        clampDouble(estimate.pixelsPerSecond.dy, -maxVelocity, maxVelocity);
     return DragEndDetails(
       velocity: Velocity(pixelsPerSecond: Offset(0, dy)),
       primaryVelocity: dy,
@@ -1002,9 +975,7 @@ class VerticalDragGestureRecognizer extends DragGestureRecognizer {
 
   @override
   bool hasSufficientGlobalDistanceToAccept(
-    PointerDeviceKind pointerDeviceKind,
-    double? deviceTouchSlop,
-  ) {
+      PointerDeviceKind pointerDeviceKind, double? deviceTouchSlop) {
     return _globalDistanceMoved.abs() >
         computeHitSlop(pointerDeviceKind, gestureSettings);
   }
@@ -1053,18 +1024,13 @@ class HorizontalDragGestureRecognizer extends DragGestureRecognizer {
 
   @override
   DragEndDetails? _considerFling(
-    VelocityEstimate estimate,
-    PointerDeviceKind kind,
-  ) {
+      VelocityEstimate estimate, PointerDeviceKind kind) {
     if (!isFlingGesture(estimate, kind)) {
       return null;
     }
     final double maxVelocity = maxFlingVelocity ?? kMaxFlingVelocity;
-    final double dx = clampDouble(
-      estimate.pixelsPerSecond.dx,
-      -maxVelocity,
-      maxVelocity,
-    );
+    final double dx =
+        clampDouble(estimate.pixelsPerSecond.dx, -maxVelocity, maxVelocity);
     return DragEndDetails(
       velocity: Velocity(pixelsPerSecond: Offset(dx, 0)),
       primaryVelocity: dx,
@@ -1075,9 +1041,7 @@ class HorizontalDragGestureRecognizer extends DragGestureRecognizer {
 
   @override
   bool hasSufficientGlobalDistanceToAccept(
-    PointerDeviceKind pointerDeviceKind,
-    double? deviceTouchSlop,
-  ) {
+      PointerDeviceKind pointerDeviceKind, double? deviceTouchSlop) {
     return _globalDistanceMoved.abs() >
         computeHitSlop(pointerDeviceKind, gestureSettings);
   }
@@ -1124,17 +1088,14 @@ class PanGestureRecognizer extends DragGestureRecognizer {
 
   @override
   DragEndDetails? _considerFling(
-    VelocityEstimate estimate,
-    PointerDeviceKind kind,
-  ) {
+      VelocityEstimate estimate, PointerDeviceKind kind) {
     if (!isFlingGesture(estimate, kind)) {
       return null;
     }
     final Velocity velocity =
         Velocity(pixelsPerSecond: estimate.pixelsPerSecond).clampMagnitude(
-      minFlingVelocity ?? kMinFlingVelocity,
-      maxFlingVelocity ?? kMaxFlingVelocity,
-    );
+            minFlingVelocity ?? kMinFlingVelocity,
+            maxFlingVelocity ?? kMaxFlingVelocity);
     return DragEndDetails(
       velocity: velocity,
       globalPosition: _finalPosition.global,
@@ -1144,9 +1105,7 @@ class PanGestureRecognizer extends DragGestureRecognizer {
 
   @override
   bool hasSufficientGlobalDistanceToAccept(
-    PointerDeviceKind pointerDeviceKind,
-    double? deviceTouchSlop,
-  ) {
+      PointerDeviceKind pointerDeviceKind, double? deviceTouchSlop) {
     return _globalDistanceMoved.abs() >
         computePanSlop(pointerDeviceKind, gestureSettings);
   }
@@ -1161,4 +1120,7 @@ class PanGestureRecognizer extends DragGestureRecognizer {
   String get debugDescription => 'pan';
 }
 
-enum _DragDirection { horizontal, vertical }
+enum _DragDirection {
+  horizontal,
+  vertical,
+}
